@@ -83,7 +83,9 @@ import { mapState } from "vuex";
 import throttle from "lodash/throttle";
 export default {
   name: "TypeNav",
+  //组件挂载完毕，可以向服务器发请求
   mounted() {
+    //通知Vuex发请求，获取数据，存储于仓库中
     // this.$store.dispatch("categoryList");
     if (this.$route.path != "/home") {
       this.show = false;
@@ -91,6 +93,8 @@ export default {
   },
   computed: {
     ...mapState({
+      //右侧需要的是一个函数，当使用这个计算属性的时候，右侧函数会立即执行一次
+      //该函数接受一个参数state：大仓库中的数据
       categoryList: (state) => {
         return state.home.categoryList;
       },
@@ -103,6 +107,7 @@ export default {
     };
   },
   methods: {
+    //鼠标进入修改响应式数据currentIndex
     changeIndex: throttle(function (index) {
       this.currentIndex = index;
     }, 50),

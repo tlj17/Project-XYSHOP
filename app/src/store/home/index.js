@@ -2,6 +2,7 @@
 import {reqCategoryList,reqgetBannerList,reqFloorList} from '@/api'
 //准备actions对象--响应组件中用户的动作
 const actions = {
+    //通过api里面的接口函数调用，向服务器发请求，获取服务器的数据
     async categoryList({commit}){
         let result =await reqCategoryList()
         if(result.code==200)
@@ -37,7 +38,7 @@ const mutations = {
     }
 
 }
-//准备state对象--保存具体的数据
+//准备state对象--保存具体的数据，state中数据默认初始值别乱写，服务器返回对象，服务器返回数组，根据接口返回值来初始化
 const state = {
     categoryList:[],
     bannerList:[],
