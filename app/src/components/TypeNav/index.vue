@@ -4,65 +4,42 @@
     <div class="type-nav">
       <div class="container">
         <div @mouseleave="leaveShow">
-          <h2 class="all" @mouseenter="enterShow" >
-          全部商品分类
-        </h2>
-        
-        <transition name="appear">
-          <div class="sort" v-show="show">
-            <div class="all-sort-list2" @click="goSearch" @mouseleave="leaveIndex">
-              <div
-                class="item"
-                v-for="(c1, index) in categoryList"
-                :key="c1.categoryId"
-                :class="{ cur: currentIndex == index }"
-              >
-                <h3 @mouseenter="changeIndex(index)">
-                  <a
-                    :data-categoryName="c1.categoryName"
-                    :data-category1Id="c1.categoryId"
-                    >{{ c1.categoryName }}</a
-                  >
-                </h3>
-                <!-- 二三级分类 -->
-                <div
-                  class="item-list clearfix"
-                  :style="{ display: currentIndex == index ? 'block' : 'none' }"
-                >
-                  <div
-                    class="subitem"
-                    v-for="(c2, index) in c1.categoryChild"
-                    :key="c2.categoryId"
-                  >
-                    <dl class="fore">
-                      <dt>
-                        <a
-                          :data-categoryName="c2.categoryName"
-                          :data-category2Id="c2.categoryId"
-                          >{{ c2.categoryName }}</a
-                        >
-                      </dt>
-                      <dd>
-                        <em
-                          v-for="(c3, index) in c2.categoryChild"
-                          :key="c3.categoryId"
-                        >
-                          <a
-                            :data-categoryName="c3.categoryName"
-                            :data-category3Id="c3.categoryId"
-                            >{{ c3.categoryName }}</a
-                          >
-                        </em>
-                      </dd>
-                    </dl>
+          <h2 class="all" @mouseenter="enterShow">全部商品分类</h2>
+
+          <transition name="appear">
+            <div class="sort" v-show="show">
+              <!-- 事件代理 -->
+              <div class="all-sort-list2" @click="goSearch" @mouseleave="leaveIndex">
+                <div class="item" v-for="(c1, index) in categoryList" :key="c1.categoryId"
+                  :class="{ cur: currentIndex == index }">
+                  <h3 @mouseenter="changeIndex(index)">
+                    <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
+                  </h3>
+                  <!-- 二三级分类 -->
+                  <div class="item-list clearfix" :style="{
+                    display: currentIndex == index ? 'block' : 'none',
+                  }">
+                    <div class="subitem" v-for="(c2, index) in c1.categoryChild" :key="c2.categoryId">
+                      <dl class="fore">
+                        <dt>
+                          <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{ c2.categoryName
+                          }}</a>
+                        </dt>
+                        <dd>
+                          <em v-for="(c3, index) in c2.categoryChild" :key="c3.categoryId">
+                            <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName
+                            }}</a>
+                          </em>
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </transition>
+          </transition>
         </div>
-        
+
         <nav class="nav">
           <a href="###">服装城</a>
           <a href="###">美妆馆</a>
@@ -108,6 +85,7 @@ export default {
   },
   methods: {
     //鼠标进入修改响应式数据currentIndex
+    //es5写法
     changeIndex: throttle(function (index) {
       this.currentIndex = index;
     }, 50),
@@ -116,8 +94,7 @@ export default {
     },
     goSearch(event) {
       // console.log(event.target.dataset.categoryname);
-      let { categoryname, category1id, category2id, category3id } =
-        event.target.dataset;
+      let { categoryname, category1id, category2id, category3id } = event.target.dataset;
       if (categoryname) {
         let location = { name: "search" };
         let query = { categoryName: categoryname };
@@ -129,11 +106,10 @@ export default {
           query.category3Id = category3id;
         }
         location.query = query;
-        if(this.$route.params)
-        {
-          location.params=this.$route.params
+        if (this.$route.params) {
+          location.params = this.$route.params;
         }
-        console.log(location);
+       // console.log(location);
         this.$router.push(location);
       }
     },
@@ -141,8 +117,7 @@ export default {
       this.show = true;
     },
     leaveShow() {
-      if(this.$route.path!='/home')
-      this.show = false;
+      if (this.$route.path != "/home") this.show = false;
     },
   },
 };
@@ -258,21 +233,22 @@ export default {
             }
           }
         }
+
         .cur {
           background-color: skyblue;
         }
       }
     }
 
-    .appear-enter{
+    .appear-enter {
       height: 0;
     }
 
-    .appear-enter-to{
+    .appear-enter-to {
       height: 461px;
     }
 
-    .appear-enter-active{
+    .appear-enter-active {
       transition: all 0.5s linear;
     }
   }

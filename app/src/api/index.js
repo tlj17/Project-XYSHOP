@@ -7,6 +7,7 @@ import mockRequests from './mockAjax'
 export const reqCategoryList = ()=>requests({url:'/product/getBaseCategoryList',methods:'get'})
 export const reqgetBannerList = ()=>mockRequests.get('/banner')
 export const reqFloorList = ()=>mockRequests.get('/floor')
+//当前这个接口，给服务器传递一个默认参数，至少是一个空对象
 export const reqGetSearchInfo = (params)=>requests({
     url:'/list',
     method:'post',

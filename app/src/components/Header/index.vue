@@ -56,9 +56,10 @@ export default {
     }
   },
   methods:{
+    //搜索按钮的事件处理函数，用于跳转到search路由组件中
     goSearch(){
       let location = {name:"search",params:{keyword:this.keyword}}
-      console.log(location);
+      // console.log(location);
       if(this.$route.query)
       {
         location.query=this.$route.query
