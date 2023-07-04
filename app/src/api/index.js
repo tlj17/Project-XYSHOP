@@ -15,3 +15,5 @@ export const reqGetSearchInfo = (params)=>requests({
 })
 
 export const reqGetCode = (phone)=>requests({url:`/api/user/passport/sendCode/${phone}`,method:'get'})
+
+export const reqDetailInfo = (skuId)=>requests({url:`/item/${ skuId }`,methods:'get'})

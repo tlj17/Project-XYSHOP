@@ -4,7 +4,7 @@
       <div class="fl key brand">品牌</div>
       <div class="value logos">
         <ul class="logo-list">
-          <li v-for="(trademark,index) in trademarkList" :key="trademark.tmID">{{trademark.tmName}}</li>
+          <li v-for="(trademark,index) in trademarkList" :key="trademark.tmID" @click="tradeMarkHandler(trademark)">{{trademark.tmName}}</li>
           
         </ul>
       </div>
@@ -13,11 +13,12 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
+    <!-- 平台售卖属性 -->
     <div class="type-wrap" v-for="(attr,index) in attrsList" :key="attr.attrId">
       <div class="fl key">{{ attr.attrName }}</div>
       <div class="fl value">
         <ul class="type-list" >
-          <li v-for="(attrValue,index) in attr.attrValueList" :key="index">
+          <li v-for="(attrValue,index) in attr.attrValueList" :key="index" @click="attrInfo(attr,attrValue)">
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -33,6 +34,17 @@ import {mapGetters} from 'vuex'
     name: 'SearchSelector',
     computed:{
       ...mapGetters(['trademarkList','attrsList'])
+    },
+    methods:{
+      tradeMarkHandler(trademark){
+      //点击后，还是需要整理参数发请求展示数据
+      //在父组件中发请求，因为参数searchparams在父组件身上
+      //子传父 用自定义事件 把品牌信息传过去
+      this.$emit('trademarkInfo',trademark)
+      },
+      attrInfo(attr,attrValue){
+        this.$emit('attrInfo',attr,attrValue)
+      }
     }
   }
 </script>
