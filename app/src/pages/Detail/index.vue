@@ -18,7 +18,7 @@
           <!--放大镜效果-->
           <Zoom :skuImageList="skuImageList"/>
           <!-- 小图列表 -->
-          <ImageList />
+          <ImageList :skuImageList="skuImageList"/>
         </div>
         <!-- 右侧选择区域布局 -->
         <div class="InfoWrap">
@@ -63,39 +63,19 @@
           <div class="choose">
             <div class="chooseArea">
               <div class="choosed"></div>
-              <dl>
-                <dt class="title">选择颜色</dt>
-                <dd changepirce="0" class="active">金色</dd>
-                <dd changepirce="40">银色</dd>
-                <dd changepirce="90">黑色</dd>
-              </dl>
-              <dl>
-                <dt class="title">内存容量</dt>
-                <dd changepirce="0" class="active">16G</dd>
-                <dd changepirce="300">64G</dd>
-                <dd changepirce="900">128G</dd>
-                <dd changepirce="1300">256G</dd>
-              </dl>
-              <dl>
-                <dt class="title">选择版本</dt>
-                <dd changepirce="0" class="active">公开版</dd>
-                <dd changepirce="-1000">移动版</dd>
-              </dl>
-              <dl>
-                <dt class="title">购买方式</dt>
-                <dd changepirce="0" class="active">官方标配</dd>
-                <dd changepirce="-240">优惠移动版</dd>
-                <dd changepirce="-390">电信优惠版</dd>
+              <dl v-for="(spuSaleAttr,index) in spuSaleAttrList" :key="spuSaleAttr.id">
+                <dt class="title">{{ spuSaleAttr.saleAttrName }}</dt>
+                <dd changepirce="0" :class="{active:spuSaleAttrValue.isChecked==1}" v-for="(spuSaleAttrValue,index) in spuSaleAttr.spuSaleAttrValueList" :key="spuSaleAttrValue.id" @click="changeActive(spuSaleAttrValue,spuSaleAttr.spuSaleAttrValueList)">{{ spuSaleAttrValue.saleAttrValueName }}</dd>
               </dl>
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt">
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input autocomplete="off" class="itxt" v-model="skuCount" @change="changeskuCount">
+                <a href="javascript:" class="plus" @click="skuCount++">+</a>
+                <a href="javascript:" class="mins" @click="skuCount>1?skuCount--:skuCount=1">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a href="javascript:" @click="addShopCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -352,7 +332,12 @@
 
   export default {
     name: 'Detail',
-    
+    data() {
+      return {
+        //购买产品数量
+        skuCount:1
+      }
+    },
     components: {
       ImageList,
       Zoom
@@ -361,12 +346,48 @@
       this.$store.dispatch('getDetailInfo',this.$route.params.skuid)
     },
     computed:{
-      ...mapGetters(['categoryView','skuInfo']),
+      ...mapGetters(['categoryView','skuInfo','spuSaleAttrList']),
       skuImageList(){
         return this.skuInfo.skuImageList||[]
       }
+    },
+    methods:{
+      changeActive(spuSaleAttrValue,spuSaleAttr){
+        spuSaleAttr.forEach(item=>{
+          item.isChecked=0
+        })
+        spuSaleAttrValue.isChecked=1
+      },
+      changeskuCount(event){
+        let value = event.target.value * 1
+        if(isNaN(value)||value<1){
+          this.skuCount = 1
+        }else{
+          this.skuCount = parseInt(value)
+        }
+      },
+      async addShopCart(){
+        //1、发请求---将产品加到数据库（通知服务器）
+        //2、服务器存储成功---进行路由跳转传参
+        //3、失败---给用户进行提示
+        try{
+          await this.$store.dispatch('shopCart',{skuId:this.$route.params.skuid,skuCount:this.skuCount})
+          //1、跳转传参用会话存储解决
+          // sessionStorage.setItem('SKUINFO',JSON.stringify(this.skuInfo))
+          //2、利用vuex解决
+          this.$router.push({name:'addcartsuccess',query:{skuCount:this.skuCount}})
+        }catch(error){
+
+        }
+        
+      }
+      },
+      //3、跳转传参用全局事件总线解决
+    //  beforeDestroy() {
+        // this.$bus.$emit('getSkuInfo',this.skuInfo)
+      // },
+        
     }
-  }
 </script>
 
 <style lang="less" scoped>

@@ -14,27 +14,27 @@
       <div class="content">
         <label>验证码:</label>
         <input type="text" placeholder="请输入验证码" v-model="code">
-        <button style="width: 70px;height: 38px;" @click="$store.dispatch('getCode',phone)">获取验证码</button>
+        <button style="width: 70px;height: 38px;" @click="getCode">获取验证码</button>
         <img ref="code" src="http://182.92.128.115/api/user/passport/code" alt="code">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>登录密码:</label>
-        <input type="text" placeholder="请输入你的登录密码">
+        <input type="password" placeholder="请输入你的登录密码" v-model="password">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="text" placeholder="请输入确认密码">
+        <input type="password" placeholder="请输入确认密码" v-model="passwordAgain">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="controls">
-        <input name="m1" type="checkbox">
+        <input name="m1" type="checkbox" :checked="agree">
         <span>同意协议并注册《尚品汇用户协议》</span>
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="btn">
-        <button>完成注册</button>
+        <button @click="userRegister">完成注册</button>
       </div>
     </div>
 
@@ -63,7 +63,34 @@
     data() {
       return {
         phone:'',
-        code:''
+        code:'',
+        password:'',
+        passwordAgain:'',
+        //是否同意协议
+        agree:true
+      }
+    },
+    methods: {
+      async getCode(){
+        try {
+          //解构
+          const {phone} = this
+          //判断至少手机号不为空 phone为true才执行后面的派遣
+          phone && (await this.$store.dispatch('getCode',this.phone))
+          this.code = this.$store.state.user.code
+        } catch (error) {
+          
+        }
+      },
+      async userRegister(){
+       try {
+        //如果成功，路由跳转到登陆页面
+        const{phone,password,passwordAgain,code}=this;
+        (phone && code && (password==passwordAgain)) && await this.$store.dispatch('userRegister',{phone,password,code})
+        this.$router.push('/login')
+       } catch (error) {
+        
+       }
       }
     },
   }

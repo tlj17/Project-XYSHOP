@@ -1,8 +1,8 @@
 <template>
-  <div class="swiper-container">
+  <div class="swiper-container" ref="cur">
     <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <img src="../images/s1.png">
+      <div class="swiper-slide" v-for="(slide,index) in skuImageList" :key="slide.id">
+        <img :src="slide.imgUrl" :class="{active:currentIndex==index}" @click="changeIndex(index)">
       </div>
     </div>
     <div class="swiper-button-next"></div>
@@ -15,7 +15,35 @@
   import Swiper from 'swiper'
   export default {
     name: "ImageList",
-  }
+    data() {
+      return {
+        currentIndex:0
+      }
+    },
+    props:['skuImageList'],
+    watch:{
+      //通过watch监听skuImageList属性 的属性值的变化
+      //如果执行handler方法，代表组件实例身上的这个属性的属性值已经有了但是只能保证数据已经有了，不能保证v-for已经把结构渲染完毕
+        skuImageList(newValue,oldValue){
+          //$nextTick:在下次DOM更新循环结束之后，执行延迟回调。在修改数据之后，立即使用这个方法，获取更新后的DOM。可以保证页面中的结构一定是有的
+          this.$nextTick(()=>{
+           new Swiper(this.$refs.cur, {
+            navigation:{
+              nextEl:'.swiper-button-next',
+              prevEl:'.swiper-button-prev'
+            },
+            slidesPerView :3
+          })
+      })
+    }
+  },
+  methods:{
+    changeIndex(index){
+      this.currentIndex=index
+      this.$bus.$emit('getIndex',this.currentIndex)
+    }
+  },
+}
 </script>
 
 <style lang="less" scoped>
@@ -39,11 +67,6 @@
         display: block;
 
         &.active {
-          border: 2px solid #f60;
-          padding: 1px;
-        }
-
-        &:hover {
           border: 2px solid #f60;
           padding: 1px;
         }
