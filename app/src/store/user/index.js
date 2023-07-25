@@ -1,8 +1,9 @@
 //登录与注册模块
-import {reqGetCode ,reqUserRegister,reqLogin} from '@/api'
+import {reqGetCode ,reqUserRegister,reqLogin,reqUserInfo,reqLogOut} from '@/api'
+import {getToken, setToken,removeToken} from '@/utils/token'
 const state = {
     code:'',
-    token:'',
+    token:getToken('TOKEN'),
     nickName:''
 }
 const mutations = {
@@ -12,9 +13,14 @@ const mutations = {
     USERLOGIN(state,value){
         state.token=value
     },
-    SET_USERINFO(state, nickName) {
+    GETUSERINFO(state, nickName) {
         state.nickName = nickName;
    },
+   CLEARTOKEN(state){
+    state.token=''
+    state.nickName=''
+    removeToken()
+   }
 }
 const actions = {
      async getCode({commit},phone){
@@ -39,22 +45,34 @@ const actions = {
         let result = await reqLogin(data)
         if(result.code==200){
             commit('USERLOGIN',result.data.token)
+             //持久化存储token
+            setToken(result.data.token)
             return 'ok'
         }else{
             return Promise.reject(new Error('fail'))
         }
     },
-    async getUserInfo({ commit, state, dispatch }) {
+    async getUserInfo({ commit }) {
         let result = await reqUserInfo();
         if (result.code == 200) {
-             commit('SET_USERINFO', result.data.nickName);
-             return 'ok';
-        } else {
-             return Promise.reject();
+             commit('GETUSERINFO', result.data.nickName);
+             return 'ok'
+        }else{
+            return Promise.reject(new Error('fail'))
         }
    },
    
-    
+    async logOut({commit}){
+        let result = await reqLogOut()
+        if(result.code==200)
+        {
+            commit('CLEARTOKEN')
+            return 'ok'
+        }
+        else{
+            return Promise.reject(new Error('fail'))
+        }
+    }
 }
 const getters = {}
 

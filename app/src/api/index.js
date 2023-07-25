@@ -34,3 +34,9 @@ export const reqUserRegister = (data)=>requests({url:'/user/passport/register',d
 export const reqLogin=(data)=>requests({url:'/user/passport/login',data,method:'post'})
 //获取用户信息
 export const reqUserInfo=()=>requests({url:'/user/passport/auth/getUserInfo',method:'get'})
+//退出登录
+export const reqLogOut=()=>requests({url:'/user/passport/logout',method:'get'})
+//获取用户地址信息
+export const reqAddressInfo =()=>requests({url:'/user/userAddress/auth/findUserAddressList',method:'get'})
+//获取交易页商品清单
+export const reqOrderInfo = ()=>requests({url:'/order/auth/trade',method:'get'})
